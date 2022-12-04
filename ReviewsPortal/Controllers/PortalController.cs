@@ -23,6 +23,27 @@ namespace ReviewsPortal.Controllers
             return View();
         }
 
+        public IActionResult Games()
+        {
+            return View();
+        }
+
+        public IActionResult Books()
+        {
+            return View();
+        }
+
+        public IActionResult Music()
+        {
+            return View();
+        }
+
+        public IActionResult Theatre()
+        {
+            return View();
+        }
+
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

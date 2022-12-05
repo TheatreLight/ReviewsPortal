@@ -7,7 +7,7 @@
         public int GroupID { get; set; }
         public string ReviewTopic { get; set;}
         public string ReviewText { get; set;}
-        public List<Comment> Comments { get; set;}
+        public List<Comment>? Comments { get; set;}
         public User User { get; set; }
         public Group Group { get; set; }
     }

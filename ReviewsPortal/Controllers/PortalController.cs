@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ReviewsPortal.Data;
 using ReviewsPortal.Models;
 using System.Diagnostics;
 
@@ -6,11 +7,11 @@ namespace ReviewsPortal.Controllers
 {
     public class PortalController : Controller
     {
-        private readonly ILogger<PortalController> _logger;
+        private readonly ReviewsPortalContext _context;
 
-        public PortalController(ILogger<PortalController> logger)
+        public PortalController(ReviewsPortalContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -35,7 +36,7 @@ namespace ReviewsPortal.Controllers
 
         public IActionResult Admin()
         {
-            return View();
+            return View(_context.Users.ToList());
         }
         public IActionResult Movies()
         {

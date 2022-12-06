@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ReviewsPortal.Data;
 using ReviewsPortal.Models;
 using System.Diagnostics;
@@ -32,7 +33,8 @@ namespace ReviewsPortal.Controllers
 
         public IActionResult Review(int id)
         {
-            var review = _context.Reviews.FirstOrDefault(r => r.ReviewID == id);
+
+            var review = _context.Reviews.Include(r => r.Comments).FirstOrDefault(r => r.ReviewID == id);
             ViewData["Author"] = _context.Users.FirstOrDefault(u => u.UserID == review.UserID).UserName;
             return View(review);
         }
@@ -49,41 +51,6 @@ namespace ReviewsPortal.Controllers
                     c => c.GroupID == id
                         ).ToList());
         }
-        /*public IActionResult Movies(int id)
-        {
-            return View(_context.Reviews.Where(
-                    c => c.GroupID == id
-                        ).ToList());
-        }
-
-        public IActionResult Games(int id)
-        {
-            return View(_context.Reviews.Where(
-                    c => c.GroupID == id
-                        ).ToList());
-        }
-
-        public IActionResult Books(int id)
-        {
-            return View(_context.Reviews.Where(
-                    c => c.GroupID == id
-                        ).ToList());
-        }
-
-        public IActionResult Music(int id)
-        {
-            return View(_context.Reviews.Where(
-                    c => c.GroupID == id
-                        ).ToList());
-        }
-
-        public IActionResult Theatre(int id)
-        {
-            return View(_context.Reviews.Where(
-                    c => c.GroupID == id
-                        ).ToList());
-        }*/
-
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

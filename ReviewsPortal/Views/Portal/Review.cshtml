@@ -8,13 +8,19 @@
 
 
 
-<div class="container bg-dark text-light">
+<div class="container bg-dark bg-opacity-25 text-light">
     <h5>author: @ViewData["Author"]</h5>
 </div>
 <p>
     @Html.DisplayFor(m => Model.ReviewText)
 </p>
 
-@*<div id="scrollist">
-    @Html.Partial("_Comments")
-</div>*@
+<div class="container bg-dark text-light">
+    <h5>Comments:</h5>
+</div>
+
+@foreach (var item in Model.Comments)
+{
+    @Html.DisplayFor(modelItem => item.CommentText)
+}
+

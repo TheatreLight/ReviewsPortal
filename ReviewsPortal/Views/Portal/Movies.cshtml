@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<ReviewsPortal.Models.Review>
 @{
     ViewData["Title"] = "Movies";
 }
@@ -9,4 +9,14 @@
 <h1>Movies</h1>
 <body>
         You can read or add feedback about movies here...
+        <table class="table">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-controller="Portal" asp-action="Review" asp-route-id="@item.ReviewID">@Html.DisplayFor(modelItem => item.ReviewTopic)</a>
+                </td>
+            </tr>
+        }
+        </table>
 </body>

@@ -2,6 +2,7 @@
 using ReviewsPortal.Data;
 using ReviewsPortal.Models;
 using System.Diagnostics;
+using System.Dynamic;
 
 namespace ReviewsPortal.Controllers
 {
@@ -29,39 +30,59 @@ namespace ReviewsPortal.Controllers
             return View();
         }
 
-        public IActionResult Review()
+        public IActionResult Review(int id)
         {
-            return View();
+            var review = _context.Reviews.FirstOrDefault(r => r.ReviewID == id);
+            ViewData["Author"] = _context.Users.FirstOrDefault(u => u.UserID == review.UserID).UserName;
+            return View(review);
         }
 
         public IActionResult Admin()
         {
             return View(_context.Users.ToList());
         }
-        public IActionResult Movies()
+
+        public IActionResult Group(int id)
         {
-            return View();
+            ViewData["GroupName"] = _context.Groups.FirstOrDefault(g => g.GroupID == id).Name;
+            return View(_context.Reviews.Where(
+                    c => c.GroupID == id
+                        ).ToList());
+        }
+        /*public IActionResult Movies(int id)
+        {
+            return View(_context.Reviews.Where(
+                    c => c.GroupID == id
+                        ).ToList());
         }
 
-        public IActionResult Games()
+        public IActionResult Games(int id)
         {
-            return View();
+            return View(_context.Reviews.Where(
+                    c => c.GroupID == id
+                        ).ToList());
         }
 
-        public IActionResult Books()
+        public IActionResult Books(int id)
         {
-            return View();
+            return View(_context.Reviews.Where(
+                    c => c.GroupID == id
+                        ).ToList());
         }
 
-        public IActionResult Music()
+        public IActionResult Music(int id)
         {
-            return View();
+            return View(_context.Reviews.Where(
+                    c => c.GroupID == id
+                        ).ToList());
         }
 
-        public IActionResult Theatre()
+        public IActionResult Theatre(int id)
         {
-            return View();
-        }
+            return View(_context.Reviews.Where(
+                    c => c.GroupID == id
+                        ).ToList());
+        }*/
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

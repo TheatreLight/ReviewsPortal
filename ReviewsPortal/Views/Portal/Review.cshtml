@@ -1,13 +1,20 @@
-﻿
+﻿@model ReviewsPortal.Models.Review
 @{
     ViewData["Title"] = "Review";
 
 }
 
-<h1>@ViewData["Topic"] Topic of review</h1>
+<h1>@Html.DisplayFor(m => Model.ReviewTopic)</h1>
 
-@ViewData["TextReview"] Text of review.
 
-<div id="scrollist">
-    @Html.Partial("_Comments")
+
+<div class="container bg-dark text-light">
+    <h5>author: @ViewData["Author"]</h5>
 </div>
+<p>
+    @Html.DisplayFor(m => Model.ReviewText)
+</p>
+
+@*<div id="scrollist">
+    @Html.Partial("_Comments")
+</div>*@

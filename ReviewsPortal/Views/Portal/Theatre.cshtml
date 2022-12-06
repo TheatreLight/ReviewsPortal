@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<ReviewsPortal.Models.Review>
+
 @{
     ViewData["Title"] = "Theatre";
 }
@@ -9,5 +10,15 @@
 <h1>Theatre</h1>
 <body>
     If you are an art connoisseur, then this is the place for you. Do not be shy.
+    <table class="table">
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReviewTopic)
+                </td>
+            </tr>
+        }
+    </table>
 </body>
 

@@ -1,0 +1,19 @@
+﻿@model IEnumerable<ReviewsPortal.Models.Review>
+@{
+    ViewData["Title"] = "Group";
+}
+
+<h1>
+    @ViewData["GroupName"]
+</h1>
+
+<table class="table">
+    @foreach (var review in Model)
+    {
+        <tr>
+            <td>
+                <a asp-controller="Portal" asp-action="Review" asp-route-id="@review.ReviewID">@Html.DisplayFor(r => review.ReviewTopic)</a>
+            </td>
+        </tr>
+    }
+</table>

@@ -7,7 +7,6 @@
 <h1>@Html.DisplayFor(m => Model.ReviewTopic)</h1>
 
 
-
 <div class="container bg-dark bg-opacity-25 text-light">
     <h5>author: @ViewData["Author"]</h5>
 </div>
@@ -21,6 +20,10 @@
 
 @foreach (var item in Model.Comments)
 {
-    @Html.DisplayFor(modelItem => item.CommentText)
+    <b>@Html.DisplayFor(modelIem => item.User.UserName):</b>
+    <div class="container">
+        <i>@Html.DisplayFor(modelItem => item.CommentText)</i>
+    </div>
+    
 }
 

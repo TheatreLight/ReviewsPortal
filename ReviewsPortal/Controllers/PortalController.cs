@@ -34,7 +34,7 @@ namespace ReviewsPortal.Controllers
         public IActionResult Review(int id)
         {
 
-            var review = _context.Reviews.Include(r => r.Comments).FirstOrDefault(r => r.ReviewID == id);
+            var review = _context.Reviews.Include(r => r.Comments).ThenInclude(c => c.User).FirstOrDefault(r => r.ReviewID == id);
             ViewData["Author"] = _context.Users.FirstOrDefault(u => u.UserID == review.UserID).UserName;
             return View(review);
         }

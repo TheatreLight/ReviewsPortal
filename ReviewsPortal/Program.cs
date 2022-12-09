@@ -1,5 +1,6 @@
 using ReviewsPortal.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ReviewsPortalContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING") ?? 
     throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+});
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -31,9 +36,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

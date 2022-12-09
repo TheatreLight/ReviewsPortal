@@ -21,15 +21,15 @@ namespace ReviewsPortal.Controllers
             return View();
         }
 
-        public IActionResult Login()
+        /*public IActionResult Login()
         {
             return View();
-        }
+        }*/
 
-        public IActionResult Profile()
+        /*public IActionResult Profile()
         {
             return View();
-        }
+        }*/
 
         public IActionResult Review(int id)
         {

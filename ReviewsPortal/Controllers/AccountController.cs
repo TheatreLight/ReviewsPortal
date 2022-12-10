@@ -8,6 +8,7 @@ using ReviewsPortal.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace ReviewsPortal.Controllers
 {
@@ -28,12 +29,17 @@ namespace ReviewsPortal.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => 
+                var user = await _context.Users.FirstOrDefaultAsync(u =>
                 u.UserEmail == model.Email && u.Password == model.Password);
+                if (user != null && user.UserName == "admin" && user.Password == "admin")
+                {
+                    await Authenticate(model.Email);
+                    return RedirectToAction("Admin", "Account");
+                }
                 if (user != null)
                 {
                     await Authenticate(model.Email);
-                    return RedirectToAction("Profile", "Account", user.UserName);
+                    return RedirectToAction("Profile", "Account", user);
                 }
             }
             return View(model);
@@ -53,39 +59,43 @@ namespace ReviewsPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(RegisterModel model)
         {
-            if (ModelState.IsValid)
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == model.Password);
+            if (user == null)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == model.Password);
-                if (user == null) 
-                {
-                    _context.Users.Add(new User { UserName = model.Name, UserEmail = model.Email, Password = model.Password});
-                    await _context.SaveChangesAsync();
-                    await Authenticate(model.Email);
-                    return RedirectToAction("Profile", "Account");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "User already registered");
-                }
+                _context.Users.Add(new User { UserName = model.Name, UserEmail = model.Email, Password = model.Password });
+                await _context.SaveChangesAsync();
+                await Authenticate(model.Email);
+                user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == model.Password);
+                return RedirectToAction("Profile", "Account", user);
+            }
+            else
+            {
+                ModelState.AddModelError("", "User already registered");
             }
             return View(model);
         }
 
         [Authorize]
-        public IActionResult Profile(string username)
+        public IActionResult Profile(User user)
         {
-            ViewData["CurrentUser"] = username;
-            return View();
+            return View(user);
         }
 
-        private async Task Authenticate(string userName)
+        [Authorize(Policy = "Admin")]
+        public IActionResult Admin()
+        {
+            var user = _context.Users.ToList();
+            return View(user);
+        }
+
+        private async Task Authenticate(string userEmail)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
+                new Claim("userEmail", userEmail)
             };
-            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", 
-                ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie",
+                ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultNameClaimType);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
     }

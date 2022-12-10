@@ -18,6 +18,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 {
     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
 });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireClaim("userEmail", "admin"));
+});
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

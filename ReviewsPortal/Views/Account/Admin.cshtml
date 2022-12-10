@@ -3,12 +3,18 @@
     ViewData["Title"] = "Admin Page";
 }
 
+<h1>Hello, Master!</h1>
+
 <table class="table">
     @foreach (var user in Model)
     {
         <tr>
             <td>
-                @Html.DisplayFor(modelUser => user.UserName)
+                @Html.ActionLink(user.UserName, "Profile", "Account", user, null)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelUser => user.UserEmail)
             </td>
         </tr>
     }

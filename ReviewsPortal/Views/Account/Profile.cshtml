@@ -1,6 +1,9 @@
-﻿
+﻿@model ReviewsPortal.Models.User
+
 @{
     ViewData["Title"] = "User profile";
 }
 
-<h1>Hello, user @ViewData["CurrentUser"]</h1>
+<h1>Hello, @Model.UserName</h1>
+
+

@@ -33,12 +33,12 @@ namespace ReviewsPortal.Controllers
                 u.UserEmail == model.Email && u.Password == model.Password);
                 if (user != null && user.UserName == "admin" && user.Password == "admin")
                 {
-                    await Authenticate(model.Email);
+                    await Authenticate(model.Email, "Admin");
                     return RedirectToAction("Admin", "Account");
                 }
                 if (user != null)
                 {
-                    await Authenticate(model.Email);
+                    await Authenticate(model.Email, user.UserName);
                     return RedirectToAction("Profile", "Account", user);
                 }
             }
@@ -64,7 +64,7 @@ namespace ReviewsPortal.Controllers
             {
                 _context.Users.Add(new User { UserName = model.Name, UserEmail = model.Email, Password = model.Password });
                 await _context.SaveChangesAsync();
-                await Authenticate(model.Email);
+                await Authenticate(model.Email, model.Name);
                 user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == model.Password);
                 return RedirectToAction("Profile", "Account", user);
             }
@@ -88,11 +88,12 @@ namespace ReviewsPortal.Controllers
             return View(user);
         }
 
-        private async Task Authenticate(string userEmail)
+        private async Task Authenticate(string userEmail, string? userName)
         {
             var claims = new List<Claim>
             {
-                new Claim("userEmail", userEmail)
+                new Claim("userEmail", userEmail),
+                new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
             };
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie",
                 ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultNameClaimType);

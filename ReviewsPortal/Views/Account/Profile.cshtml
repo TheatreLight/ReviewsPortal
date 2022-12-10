@@ -2,8 +2,12 @@
 
 @{
     ViewData["Title"] = "User profile";
+    string Name = User.Identity.Name;
 }
 
-<h1>Hello, @Model.UserName</h1>
-
+<h1>Hello, @Name!</h1>
+@if (Name == "Admin")
+{
+    <h5>this is a profile of user @Model.UserName</h5>
+}
 

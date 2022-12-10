@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ReviewsPortal.Data;
 using ReviewsPortal.ViewModels;
+using ReviewsPortal.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace ReviewsPortal.Controllers
 {
@@ -45,6 +47,28 @@ namespace ReviewsPortal.Controllers
         public IActionResult Registration()
         {
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Registration(RegisterModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == model.Password);
+                if (user == null) 
+                {
+                    _context.Users.Add(new User { UserName = model.Name, UserEmail = model.Email, Password = model.Password});
+                    await _context.SaveChangesAsync();
+                    await Authenticate(model.Email);
+                    return RedirectToAction("Profile", "Account");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "User already registered");
+                }
+            }
+            return View(model);
         }
 
         [Authorize]

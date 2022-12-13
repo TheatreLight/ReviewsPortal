@@ -1,31 +1,41 @@
-﻿@model ReviewsPortal.Models.Review
+﻿@model ReviewsPortal.ViewModels.ReviewModel
+
 @{
     ViewData["Title"] = "Review";
-
 }
 
-<h1>@Html.DisplayFor(m => Model.ReviewTopic)</h1>
+<h1>@Html.DisplayFor(m => Model.review.ReviewTopic)</h1>
 
 
 <div class="container bg-dark bg-opacity-25 text-light">
     <h5>author: @ViewData["Author"]</h5>
 </div>
 <p>
-    @Html.DisplayFor(m => Model.ReviewText)
+    @Html.DisplayFor(m => Model.review.ReviewText)
 </p>
 
 <div class="container bg-dark text-light">
     <h5>Comments:</h5>
 </div>
 
-@if (Model.Comments != null)
+@if (Model.review.Comments.Count() != 0)
 {
-    foreach (var item in Model.Comments)
+    foreach (var elem in Model.review.Comments)
     {
-        <b>@Html.DisplayFor(modelIem => item.User.UserName):</b>
+        <b>@Html.DisplayFor(modelIem => elem.User.UserName):</b>
         <div class="container">
-            <i>@Html.DisplayFor(modelItem => item.CommentText)</i>
+            <i>@Html.DisplayFor(modelItem => elem.CommentText)</i>
         </div>
     }
+}
+
+@if (User.Identity.Name != null)
+{
+    <form asp-controller="Portal" asp-action="AddComment" method="post">
+        <label asp-for="@Model.comment.CommentText"><i>Leave comment:</i></label>
+        <p><textarea asp-for="@Model.comment.CommentText" cols="100" rows="10" maxlength="5000" wrap="hard"></textarea></p>
+        <input hidden asp-for="@Model.comment.ReviewID" value="@Model.review.ReviewID"/>
+        <p><input type="submit" value="Send" /></p>
+    </form>
 }
 

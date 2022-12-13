@@ -22,12 +22,14 @@ namespace ReviewsPortal.Controllers
             return View();
         }
 
-        public IActionResult Review()
+        public IActionResult Review(int? id)
         {
-            int id = (int)TempData["ReviewId"];
-            var review = _context.Reviews.Include(r => r.Comments).ThenInclude(c => c.User).FirstOrDefault(r => r.ReviewID == id);
-            ViewData["Author"] = _context.Users.FirstOrDefault(u => u.UserID == review.UserID).UserName;
-            return View(review);
+            if (id == null) id = (int)TempData["ReviewId"];
+            ReviewModel model = new ReviewModel();
+            model.review = _context.Reviews.Include(r => r.Comments).ThenInclude(c => c.User).FirstOrDefault(r => r.ReviewID == id);
+            model.comment = _context.Comments.FirstOrDefault(c => c.ReviewID == id);
+            ViewData["Author"] = _context.Users.FirstOrDefault(u => u.UserID == model.review.UserID).UserName;
+            return View(model);
         }
 
         public IActionResult Admin()
@@ -44,7 +46,7 @@ namespace ReviewsPortal.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddReview(ReviewModel model)
+        public async Task<IActionResult> AddReview(ProfileModel model)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == User.Identity.Name);
             var review = new Review
@@ -57,6 +59,22 @@ namespace ReviewsPortal.Controllers
             await _context.Reviews.AddAsync(review);
             await _context.SaveChangesAsync();
             TempData["ReviewId"] = review.ReviewID;
+            return RedirectToAction("Review", "Portal");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddComment(ReviewModel model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == User.Identity.Name);
+            Comment comment = new()
+            {
+                UserID = user.UserID,
+                ReviewID = model.comment.ReviewID,
+                CommentText = model.comment.CommentText
+            };
+            await _context.Comments.AddAsync(comment);
+            await _context.SaveChangesAsync();
+            TempData["ReviewId"] = model.comment.ReviewID;
             return RedirectToAction("Review", "Portal");
         }
 

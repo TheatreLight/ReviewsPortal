@@ -80,7 +80,7 @@ namespace ReviewsPortal.Controllers
         {
             ViewData["UserName"] = currentUser.UserName;
             var user = _context.Users.FirstOrDefault(u => u.UserEmail == User.Identity.Name);
-            ReviewModel model = new() { UserId = user.UserID };
+            ProfileModel model = new() { UserId = user.UserID };
             return View(model);
         }
 

@@ -12,6 +12,9 @@
     {
         <tr>
             <td>
+                @{
+                    TempData["ReviewId"] = review.ReviewID;
+                }
                 <a asp-controller="Portal" asp-action="Review" asp-route-id="@review.ReviewID">@Html.DisplayFor(r => review.ReviewTopic)</a>
             </td>
         </tr>

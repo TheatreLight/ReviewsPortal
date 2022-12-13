@@ -1,4 +1,4 @@
-﻿@model ReviewsPortal.Models.User
+﻿@model ReviewsPortal.ViewModels.ReviewModel
 
 @{
     ViewData["Title"] = "User profile";
@@ -6,8 +6,29 @@
 }
 
 <h1>Hello, @Name!</h1>
-@if (Name == "Admin")
+
+@if (Name == "admin")
 {
-    <h5>this is a profile of user @Model.UserName</h5>
+    <h5>this is a profile of user @ViewData["UserName"]</h5>
 }
 
+<div class="container">
+    <h5>Here you can write a review</h5>
+    <form asp-controller="Portal" asp-action="AddReview" method="post">
+        <label asp-for="GroupId"><i>Group:</i></label>
+        <p>
+            <select asp-for="GroupId">
+                <option value="1">Movie</option>
+                <option value="2">Game</option>
+                <option value="3">Book</option>
+                <option value="4">Music</option>
+                <option value="5">Theatre</option>
+            </select>
+        </p>
+        <label asp-for="Topic"><i>Topic:</i></label>
+        <p><input asp-for="Topic" type="text" maxlength="70" size="98" /></p>
+        <label asp-for="Text"><i>Text:</i></label>
+        <p><textarea asp-for="Text" cols="100" rows="10" maxlength="5000"></textarea></p>
+        <p><input type="submit" value="Send" /></p>
+    </form>
+</div>

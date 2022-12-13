@@ -31,15 +31,15 @@ namespace ReviewsPortal.Controllers
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u =>
                 u.UserEmail == model.Email && u.Password == model.Password);
-                if (user != null && user.UserName == "admin" && user.Password == "admin")
+                if (user != null && user.UserEmail == "admin" && user.Password == "admin")
                 {
-                    await Authenticate(model.Email, "Admin");
+                    await Authenticate(model.Email);
                     return RedirectToAction("Admin", "Account");
                 }
                 if (user != null)
                 {
-                    await Authenticate(model.Email, user.UserName);
-                    return RedirectToAction("Profile", "Account", user);
+                    await Authenticate(model.Email);
+                    return RedirectToAction("Profile", "Account");
                 }
             }
             return View(model);
@@ -64,9 +64,9 @@ namespace ReviewsPortal.Controllers
             {
                 _context.Users.Add(new User { UserName = model.Name, UserEmail = model.Email, Password = model.Password });
                 await _context.SaveChangesAsync();
-                await Authenticate(model.Email, model.Name);
+                await Authenticate(model.Email);
                 user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == model.Password);
-                return RedirectToAction("Profile", "Account", user);
+                return RedirectToAction("Profile", "Account");
             }
             else
             {
@@ -76,9 +76,12 @@ namespace ReviewsPortal.Controllers
         }
 
         [Authorize]
-        public IActionResult Profile(User user)
+        public IActionResult Profile(User currentUser)
         {
-            return View(user);
+            ViewData["UserName"] = currentUser.UserName;
+            var user = _context.Users.FirstOrDefault(u => u.UserEmail == User.Identity.Name);
+            ReviewModel model = new() { UserId = user.UserID };
+            return View(model);
         }
 
         [Authorize(Policy = "Admin")]
@@ -88,11 +91,10 @@ namespace ReviewsPortal.Controllers
             return View(user);
         }
 
-        private async Task Authenticate(string userEmail, string? userName)
+        private async Task Authenticate(string userName)
         {
             var claims = new List<Claim>
             {
-                new Claim("userEmail", userEmail),
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
             };
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie",

@@ -18,12 +18,14 @@
     <h5>Comments:</h5>
 </div>
 
-@foreach (var item in Model.Comments)
+@if (Model.Comments != null)
 {
-    <b>@Html.DisplayFor(modelIem => item.User.UserName):</b>
-    <div class="container">
-        <i>@Html.DisplayFor(modelItem => item.CommentText)</i>
-    </div>
-    
+    foreach (var item in Model.Comments)
+    {
+        <b>@Html.DisplayFor(modelIem => item.User.UserName):</b>
+        <div class="container">
+            <i>@Html.DisplayFor(modelItem => item.CommentText)</i>
+        </div>
+    }
 }
 

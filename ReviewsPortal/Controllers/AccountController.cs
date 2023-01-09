@@ -9,6 +9,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace ReviewsPortal.Controllers
 {
@@ -30,7 +32,7 @@ namespace ReviewsPortal.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u =>
-                u.UserEmail == model.Email && u.Password == model.Password);
+                u.UserEmail == model.Email && u.Password == ComputeHash(model.Password));
                 if (user != null && user.UserEmail == "admin" && user.Password == "admin")
                 {
                     await Authenticate(model.Email);
@@ -59,10 +61,10 @@ namespace ReviewsPortal.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Registration(RegisterModel model)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == model.Password);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == ComputeHash(model.Password));
             if (user == null)
             {
-                _context.Users.Add(new User { UserName = model.Name, UserEmail = model.Email, Password = model.Password });
+                _context.Users.Add(new User { UserName = model.Name, UserEmail = model.Email, Password = ComputeHash(model.Password) });
                 await _context.SaveChangesAsync();
                 await Authenticate(model.Email);
                 user = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == model.Email && u.Password == model.Password);
@@ -100,6 +102,15 @@ namespace ReviewsPortal.Controllers
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie",
                 ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultNameClaimType);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+        }
+
+        private string ComputeHash(string input)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+                return Convert.ToBase64String(bytes);
+            }
         }
     }
 }
